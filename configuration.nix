@@ -33,5 +33,13 @@
   swapDevices = [
     { device = "/var/swapfile"; size = 1024; }
   ];
+
+  services.hostapd = {
+    enable = true;
+    ssid = "coffeemachine";
+    wpa = false;
+  };
+
+
   system.stateVersion = "18.03";
 }
