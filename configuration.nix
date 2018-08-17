@@ -58,7 +58,7 @@
   networking.enableIPv6 = false;
   networking.interfaces = {
     wlan0 = {
-      ipv4.addresses = [ { address = "10.0.3.1"; prefixLength = 24; } ];
+      ipv4.addresses = [ { address = "10.0.0.1"; prefixLength = 24; } ];
     };
     eth0 = {
       useDHCP = true;
@@ -71,15 +71,11 @@
     alwaysKeepRunning = false;
     resolveLocalQueries = false; # Otherwise config messes with: dnsmasq-resolv.conf
     extraConfig = ''
-        ###
-        no-resolv
         #### DHCP - config
         interface=wlan0
-        listen-address=10.0.3.1,127.0.0.1
-        dhcp-range=10.0.3.16,10.0.3.254,24h
-        dhcp-host=b4:9d:0b:78:2e:2f,10.0.3.17
-   #     #### DNS - config
-   #     address=/#/127.0.0.1 # forward everything to localhost
+        listen-address=10.0.0.1,127.0.0.1
+        dhcp-range=10.0.0.16,10.0.0.254,24h
+        dhcp-host=b4:9d:0b:78:2e:2f,10.0.0.17
     '';
   };
 
