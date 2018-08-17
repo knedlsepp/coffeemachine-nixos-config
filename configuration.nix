@@ -105,10 +105,6 @@
         rev = "6bb09bcca1bd39344d4e568c70b2ad31fd29f1bf";
       };
     };
-    virtualHosts."coffeemachine.all" = {
-      globalRedirect = "www.coffeemachine.com";
-    };
-
   };
 
   networking.firewall.enable = false;
