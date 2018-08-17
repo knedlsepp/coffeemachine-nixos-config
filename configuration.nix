@@ -54,6 +54,13 @@
     wpa = false;
   };
 
+  services.dnsmasq = {
+    # Forward all DNS requests to localhost (where we put our nginx!)
+    enable = true;
+    extraConfig = ''
+      address=/#/127.0.0.1
+    '';
+  };
 
   system.stateVersion = "18.03";
 }
