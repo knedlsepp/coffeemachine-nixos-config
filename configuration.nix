@@ -48,10 +48,6 @@
     htop
   ];
 
-  swapDevices = [
-    { device = "/var/swapfile"; size = 1024; }
-  ];
-
   services.hostapd = {
     enable = true;
     ssid = "coffeemachine";
