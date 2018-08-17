@@ -19,7 +19,6 @@
   services.openssh = { enable = true; permitRootLogin = "yes"; };
 
   nix.checkConfig = false;
-  networking.wireless.enable = true;
 
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = [
