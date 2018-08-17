@@ -63,6 +63,10 @@
       useDHCP = true;
     };
   };
+  networking.hosts = {
+    "127.0.0.1" = [ "coffeemachine.localnet" ];
+    "10.0.0.1" = [ "coffeemachine.localnet" ];
+  };
 
   services.resolved.enable = false;
   services.dnsmasq = {
@@ -71,15 +75,38 @@
     resolveLocalQueries = false; # Otherwise config messes with: dnsmasq-resolv.conf
     extraConfig = ''
         #### DHCP - config
+        bogus-priv
+        server=/localnet/10.0.0.1
+        local=/localnet/
+        address=/#/10.0.0.1
         interface=wlan0
+        domain=localnet
         listen-address=10.0.0.1,127.0.0.1
+        # Specify the range of IP addresses the DHCP server will lease out to devices, and the duration of the lease
         dhcp-range=10.0.0.16,10.0.0.254,24h
-        dhcp-host=b4:9d:0b:78:2e:2f,10.0.0.17
+        # Specify the default route
+        dhcp-option=3,10.0.0.1
+        # Specify the DNS server address
+        dhcp-option=6,10.0.0.1
+        # Set the DHCP server to authoritative mode.
+        dhcp-authoritative
     '';
   };
 
   services.nginx = {
     enable = true;
+    virtualHosts."www.coffeemachine.com" = {
+     locations."/generate_204".proxyPass = "http://localhost";
+     locations."/".tryFiles = "$uri $uri/ /index.htm";
+      root = builtins.fetchGit {
+        url = "https://github.com/knedlsepp/knedlsepp.at-landing-page.git";
+        rev = "6bb09bcca1bd39344d4e568c70b2ad31fd29f1bf";
+      };
+    };
+    virtualHosts."coffeemachine.all" = {
+      globalRedirect = "www.coffeemachine.com";
+    };
+
   };
 
   networking.firewall.enable = false;
