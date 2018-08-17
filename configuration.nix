@@ -1,9 +1,14 @@
 { config, pkgs, lib, ... }:
 {
-  security.polkit.enable = false;
+  nixpkgs.config.packageOverrides = super: let self = super.pkgs; in {
+  };
+
+  security.polkit.enable = true;
   services.udisks2.enable = false;
 
   programs.command-not-found.enable = false;
+
+  programs.vim.defaultEditor = true;
 
   system.boot.loader.kernelFile = lib.mkForce "Image";
 
