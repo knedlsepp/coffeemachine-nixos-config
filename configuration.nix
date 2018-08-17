@@ -18,8 +18,6 @@
 
   services.openssh = { enable = true; permitRootLogin = "yes"; };
 
-  nix.checkConfig = false;
-
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = [
     (pkgs.stdenv.mkDerivation {
