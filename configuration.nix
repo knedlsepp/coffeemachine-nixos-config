@@ -24,5 +24,8 @@
 
   imports = [./sd-image-aarch64.nix];
 
+  swapDevices = [
+    { device = "/var/swapfile"; size = 1024; }
+  ];
   system.stateVersion = "18.03";
 }
