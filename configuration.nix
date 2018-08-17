@@ -96,8 +96,10 @@
   services.nginx = {
     enable = true;
     virtualHosts."www.coffeemachine.com" = {
-     locations."/generate_204".proxyPass = "http://localhost";
-     locations."/".tryFiles = "$uri $uri/ /index.htm";
+     locations."/".tryFiles = "$uri $uri/ @to_home";
+     locations."@to_home".extraConfig = ''
+	return 301 /$is_args$args;
+     '';
       root = builtins.fetchGit {
         url = "https://github.com/knedlsepp/knedlsepp.at-landing-page.git";
         rev = "6bb09bcca1bd39344d4e568c70b2ad31fd29f1bf";
