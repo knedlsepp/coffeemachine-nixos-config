@@ -19,8 +19,6 @@
   # installation-device.nix turns this off.
   systemd.services.sshd.wantedBy = lib.mkOverride 0 ["multi-user.target"];
 
-  nixpkgs.crossSystem = lib.systems.examples.aarch64-multiplatform;
-
   nix.checkConfig = false;
   networking.wireless.enable = lib.mkForce false;
 
