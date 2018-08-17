@@ -16,8 +16,7 @@
   # cross build due to w3m
   services.nixosManual.enable = lib.mkOverride 0 false;
 
-  # installation-device.nix turns this off.
-  systemd.services.sshd.wantedBy = lib.mkOverride 0 ["multi-user.target"];
+  services.sshd.enable = true;
 
   nix.checkConfig = false;
   networking.wireless.enable = true;
