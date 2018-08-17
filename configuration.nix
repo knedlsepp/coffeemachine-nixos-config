@@ -38,7 +38,10 @@
      })
   ];
 
-  imports = [./sd-image-aarch64.nix];
+  imports = [
+    ./sd-image-aarch64.nix
+    ./hardware-configuration.nix
+  ];
 
   environment.systemPackages = with pkgs; [
     vim
