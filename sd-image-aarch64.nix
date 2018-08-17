@@ -30,8 +30,7 @@ in
   # Also increase the amount of CMA to ensure the virtual console on the RPi3 works.
   boot.kernelParams = ["cma=32M" "console=ttyS0,115200n8" "console=ttyAMA0,115200n8" "console=tty0"];
 
-  # FIXME: this probably should be in installation-device.nix
-  users.extraUsers.root.initialHashedPassword = "";
+  users.extraUsers.root.initialPassword = "root";
 
   sdImage = {
     populateBootCommands = let
