@@ -43,6 +43,7 @@
     vim
     gitMinimal
     htop
+    lsof
   ];
 
   services.hostapd = {
