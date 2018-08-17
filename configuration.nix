@@ -50,6 +50,7 @@
   services.hostapd = {
     enable = true;
     ssid = "coffeemachine";
+    interface = "wlan0";
     wpa = false;
   };
 
