@@ -16,7 +16,7 @@
   # cross build due to w3m
   services.nixosManual.enable = lib.mkOverride 0 false;
 
-  services.sshd.enable = true;
+  services.openssh = { enable = true; permitRootLogin = "yes"; };
 
   nix.checkConfig = false;
   networking.wireless.enable = true;
