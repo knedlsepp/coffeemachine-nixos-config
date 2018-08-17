@@ -10,9 +10,6 @@ let
 in
 {
   imports = [
-    <nixpkgs/nixos/modules/profiles/minimal.nix>
-    <nixpkgs/nixos/modules/profiles/installation-device.nix>
-    <nixpkgs/nixos/modules/installer/cd-dvd/sd-image.nix>
   ];
 
   # Needed by RPi firmware
@@ -32,27 +29,4 @@ in
 
   users.extraUsers.root.initialPassword = "root";
 
-  sdImage = {
-    populateBootCommands = let
-      configTxt = pkgs.writeText "config.txt" ''
-        kernel=u-boot.bin
-
-        # Boot in 64-bit mode.
-        arm_control=0x200
-
-        # U-Boot used to need this to work, regardless of whether UART is actually used or not.
-        # TODO: check when/if this can be removed.
-        enable_uart=1
-
-        # Prevent the firmware from smashing the framebuffer setup done by the mainline kernel
-        # when attempting to show low-voltage or overtemperature warnings.
-        avoid_warnings=1
-      '';
-      in ''
-        (cd ${pkgs.raspberrypifw}/share/raspberrypi/boot && cp bootcode.bin fixup*.dat start*.elf $NIX_BUILD_TOP/boot/)
-        cp ${pkgs.ubootRaspberryPi3_64bit}/u-boot.bin boot/u-boot.bin
-        cp ${configTxt} boot/config.txt
-        ${extlinux-conf-builder} -t 3 -c ${config.system.build.toplevel} -d ./boot
-      '';
-  };
 }
