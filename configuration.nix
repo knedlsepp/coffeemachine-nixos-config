@@ -24,6 +24,12 @@
 
   imports = [./sd-image-aarch64.nix];
 
+  environment.systemPackages = with pkgs; [
+    vim
+    gitMinimal
+    htop
+  ];
+
   swapDevices = [
     { device = "/var/swapfile"; size = 1024; }
   ];
