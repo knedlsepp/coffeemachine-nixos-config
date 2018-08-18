@@ -124,7 +124,7 @@
     virtualHosts."www.coffeemachine.com" = {
      locations."/".tryFiles = "$uri $uri/ @to_home";
      locations."@to_home".extraConfig = ''
-	return 301 /$is_args$args;
+       return 301 /$is_args$args;
      '';
       root = builtins.fetchGit {
         url = "https://github.com/knedlsepp/knedlsepp.at-landing-page.git";
