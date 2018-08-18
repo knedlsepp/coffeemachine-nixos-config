@@ -122,7 +122,6 @@
   services.nginx = {
     enable = true;
     virtualHosts."www.coffeemachine.com" = {
-     locations."/".tryFiles = "$uri $uri/ @to_home";
      locations."@to_home".extraConfig = ''
        return 301 /$is_args$args;
      '';
@@ -131,7 +130,7 @@
         rev = "6bb09bcca1bd39344d4e568c70b2ad31fd29f1bf";
       };
       locations."/" = {
-        #tryFiles = "$uri $uri/ @to_home";
+        tryFiles = "$uri $uri/ @to_home";
         extraConfig = ''
           uwsgi_pass unix://${config.services.uwsgi.instance.vassals.flask-helloworld.socket};
           include ${pkgs.nginx}/conf/uwsgi_params;
