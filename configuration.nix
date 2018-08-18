@@ -1,8 +1,34 @@
 { config, pkgs, lib, ... }:
 {
-  nixpkgs.config.packageOverrides = super: let self = super.pkgs; in {
-  };
 
+  nixpkgs.overlays = [
+    (self: super: with self; {
+
+      python27 = super.python27.override pythonOverrides;
+      python27Packages = super.recurseIntoAttrs (python27.pkgs);
+      python36 = super.python36.override pythonOverrides;
+      python36Packages = super.recurseIntoAttrs (python36.pkgs);
+      python = python27;
+      pythonPackages = python27Packages;
+
+      pythonOverrides = {
+        packageOverrides = python-self: python-super: {
+          flask-helloworld = python-super.pythonPackages.buildPythonPackage rec {
+            name = "flask-hello-world-${version}";
+            version = "0.1.0";
+            src = fetchgit {
+              url = "https://github.com/knedlsepp/flask-hello-world.git";
+              rev = "dff5896234ce2bd7afa66134206f3403f2d94e38";
+              sha256 = "0g350ikvnz1kzyb31z6363nvjgyfj5f75a2c1p008s18sv0blqr3";
+            };
+            propagatedBuildInputs = with pythonPackages; [
+              flask
+            ];
+          };
+        };
+      };
+    })
+  ];
   security.polkit.enable = true;
   services.udisks2.enable = false;
 
@@ -104,8 +130,33 @@
         url = "https://github.com/knedlsepp/knedlsepp.at-landing-page.git";
         rev = "6bb09bcca1bd39344d4e568c70b2ad31fd29f1bf";
       };
+      locations."/" = {
+        #tryFiles = "$uri $uri/ @to_home";
+        extraConfig = ''
+          uwsgi_pass unix://${config.services.uwsgi.instance.vassals.flask-helloworld.socket};
+          include ${pkgs.nginx}/conf/uwsgi_params;
+        '';
+      };
     };
   };
+  services.uwsgi = {
+    enable = true;
+    user = "nginx";
+    group = "nginx";
+    instance = {
+      type = "emperor";
+      vassals = {
+        flask-helloworld = {
+          type = "normal";
+          pythonPackages = self: with self; [ flask-helloworld ];
+          socket = "${config.services.uwsgi.runDir}/flask-helloworld.sock";
+          wsgi-file = "${pkgs.pythonPackages.flask-helloworld}/${pkgs.python.sitePackages}/helloworld/share/flask-helloworld.wsgi";
+        };
+      };
+    };
+    plugins = [ "python2" ];
+  };
+
 
   networking.firewall.enable = false;
   networking.firewall.allowedTCPPorts = [
