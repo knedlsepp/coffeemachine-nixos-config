@@ -13,17 +13,111 @@
 
       pythonOverrides = {
         packageOverrides = python-self: python-super: {
-          flask-helloworld = python-super.pythonPackages.buildPythonPackage rec {
-            name = "flask-hello-world-${version}";
-            version = "0.1.0";
-            src = fetchgit {
-              url = "https://github.com/knedlsepp/flask-hello-world.git";
-              rev = "dff5896234ce2bd7afa66134206f3403f2d94e38";
-              sha256 = "0g350ikvnz1kzyb31z6363nvjgyfj5f75a2c1p008s18sv0blqr3";
+          pandas = python-super.pandas.overrideAttrs(o: rec {
+            doCheck = false;
+          });
+          smbus2 = python-super.buildPythonPackage rec {
+            name = "smbus2-${version}";
+            version = "0.2.1";
+            src = pkgs.fetchurl {
+              url = "mirror://pypi/s/smbus2/${name}.tar.gz";
+              sha256 = "0axzrb1b20vjsp02ppz0x28pwn8gvx3rzrsvkfbbww26wzzl7ndq";
             };
-            propagatedBuildInputs = with pythonPackages; [
-              flask
+          };
+          pyscard = python-super.pyscard.overrideAttrs(o: rec {
+            preBuild = ''
+              substituteInPlace smartcard/CardMonitoring.py --replace "traceback.print_exc()" "print('Not bailing on you!'); continue"
+            '';
+          });
+          coffeemachine = python-super.buildPythonPackage rec {
+            name = "coffeemachine-${version}";
+            version = "1.0.0";
+            src = fetchGit {
+              url = "https://github.com/knedlsepp/coffeemachine.git";
+              rev = "57907d07b6f831d6e5caa09595a4a20f2ce3fd50";
+            };
+            propagatedBuildInputs = with python-self; [
+              django
+              pandas
+              pyscard
+              smbus2
             ];
+            prePatch = with python-self; ''
+              cp ${coffeemachine-settings} coffeemachine/settings.py
+            '';
+            doCheck = false;
+          };
+          coffeemachine-settings = writeTextFile rec {
+            name = "coffeemachine-settings.py";
+            text = ''
+              import os
+              BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+              SECRET_KEY = 'pbm4ad1*2k^j69_b2ro-nhcm-uh^n8&take5bhbdm@)5+35v&e'
+              DEBUG = True
+               ALLOWED_HOSTS = [ 'uwsgi-example.knedlsepp.at']
+               INSTALLED_APPS = [
+                  'coffeelist.apps.CoffeelistConfig',
+                  'django.contrib.admin',
+                  'django.contrib.auth',
+                  'django.contrib.contenttypes',
+                  'django.contrib.sessions',
+                  'django.contrib.messages',
+                  'django.contrib.staticfiles',
+              ]
+              MIDDLEWARE = [
+                  'django.middleware.security.SecurityMiddleware',
+                  'django.contrib.sessions.middleware.SessionMiddleware',
+                  'django.middleware.common.CommonMiddleware',
+                  'django.middleware.csrf.CsrfViewMiddleware',
+                  'django.middleware.locale.LocaleMiddleware',
+                  'django.contrib.auth.middleware.AuthenticationMiddleware',
+                  'django.contrib.messages.middleware.MessageMiddleware',
+                  'django.middleware.clickjacking.XFrameOptionsMiddleware',
+              ]
+              ROOT_URLCONF = 'coffeemachine.urls'
+              TEMPLATES = [
+                  {
+                      'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                      'DIRS': [],
+                      'APP_DIRS': True,
+                      'OPTIONS': {
+                          'context_processors': [
+                              'django.template.context_processors.debug',
+                              'django.template.context_processors.request',
+                              'django.contrib.auth.context_processors.auth',
+                              'django.contrib.messages.context_processors.messages',
+                          ],
+                      },
+                  },
+              ]
+              WSGI_APPLICATION = 'coffeemachine.wsgi.application'
+              DATABASES = {
+                  'default': {
+                      'ENGINE': 'django.db.backends.sqlite3',
+                      'NAME': '/tmp/coffeemachine/db.sqlite3',
+                  }
+              }
+              AUTH_PASSWORD_VALIDATORS = [
+                  {
+                      'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+                  },
+                  {
+                      'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+                  },
+                  {
+                      'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+                  },
+                  {
+                      'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+                  },
+              ]
+              LANGUAGE_CODE = 'en-us'
+              TIME_ZONE = 'UTC'
+              USE_I18N = True
+              USE_L10N = True
+              USE_TZ = True
+              STATIC_ROOT = '/tmp/coffeemachine/static/'
+            '';
           };
         };
       };
@@ -66,6 +160,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    (python.withPackages(ps: with ps; [ coffeemachine ]))
     vim
     gitMinimal
     htop
@@ -132,8 +227,13 @@
       locations."/" = {
         tryFiles = "$uri $uri/ @to_home";
         extraConfig = ''
-          uwsgi_pass unix://${config.services.uwsgi.instance.vassals.flask-helloworld.socket};
+          uwsgi_pass unix://${config.services.uwsgi.instance.vassals.coffeemachine.socket};
           include ${pkgs.nginx}/conf/uwsgi_params;
+        '';
+      };
+      locations."/static/" = {
+        extraConfig = ''
+          alias             /tmp/coffeemachine/static/;
         '';
       };
     };
@@ -145,11 +245,11 @@
     instance = {
       type = "emperor";
       vassals = {
-        flask-helloworld = {
+        coffeemachine = {
           type = "normal";
-          pythonPackages = self: with self; [ flask-helloworld ];
-          socket = "${config.services.uwsgi.runDir}/flask-helloworld.sock";
-          wsgi-file = "${pkgs.pythonPackages.flask-helloworld}/${pkgs.python.sitePackages}/helloworld/share/flask-helloworld.wsgi";
+          pythonPackages = self: with self; [ coffeemachine ];
+          socket = "${config.services.uwsgi.runDir}/coffeemachine.sock";
+          wsgi-file = "${pkgs.pythonPackages.coffeemachine}/${pkgs.python.sitePackages}/coffeemachine/wsgi.py";
         };
       };
     };
