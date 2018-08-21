@@ -15,6 +15,7 @@
         packageOverrides = python-self: python-super: {
           pandas = python-super.pandas.overrideAttrs(o: rec {
             doCheck = false;
+            doInstallCheck = false;
           });
           smbus2 = python-super.buildPythonPackage rec {
             name = "smbus2-${version}";
