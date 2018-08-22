@@ -55,8 +55,8 @@
               BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
               SECRET_KEY = 'pbm4ad1*2k^j69_b2ro-nhcm-uh^n8&take5bhbdm@)5+35v&e'
               DEBUG = True
-               ALLOWED_HOSTS = [ 'uwsgi-example.knedlsepp.at']
-               INSTALLED_APPS = [
+              ALLOWED_HOSTS = [ 'www.coffeemachine.com']
+              INSTALLED_APPS = [
                   'coffeelist.apps.CoffeelistConfig',
                   'django.contrib.admin',
                   'django.contrib.auth',
