@@ -254,7 +254,7 @@
         };
       };
     };
-    plugins = [ "python2" ];
+    plugins = [ "python3" ];
   };
 
 
