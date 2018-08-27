@@ -227,23 +227,15 @@
   services.nginx = {
     enable = true;
     virtualHosts."www.coffeemachine.com" = {
-     locations."@to_home".extraConfig = ''
-       return 301 /$is_args$args;
-     '';
-      root = builtins.fetchGit {
-        url = "https://github.com/knedlsepp/knedlsepp.at-landing-page.git";
-        rev = "6bb09bcca1bd39344d4e568c70b2ad31fd29f1bf";
-      };
-      locations."/" = {
-        tryFiles = "$uri $uri/ @to_home";
-        extraConfig = ''
-          uwsgi_pass unix://${config.services.uwsgi.instance.vassals.coffeemachine.socket};
-          include ${pkgs.nginx}/conf/uwsgi_params;
-        '';
-      };
       locations."/static/" = {
         extraConfig = ''
           alias             /tmp/coffeemachine/static/;
+        '';
+      };
+      locations."/" = {
+        extraConfig = ''
+          uwsgi_pass unix://${config.services.uwsgi.instance.vassals.coffeemachine.socket};
+          include ${pkgs.nginx}/conf/uwsgi_params;
         '';
       };
     };
