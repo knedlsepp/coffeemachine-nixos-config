@@ -138,6 +138,14 @@
   services.nixosManual.enable = lib.mkOverride 0 false;
 
   services.openssh = { enable = true; permitRootLogin = "yes"; };
+ 
+  services.pcscd = {
+    enable = true;
+    plugins = with pkgs; [ ccid ]; # acsccid
+    readerConfig = ''
+      # Empty
+    '';
+  };
 
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = [

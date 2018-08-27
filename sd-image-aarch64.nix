@@ -27,9 +27,7 @@ in
   # Also increase the amount of CMA to ensure the virtual console on the RPi3 works.
   boot.kernelParams = ["cma=32M" "console=ttyS0,115200n8" "console=ttyAMA0,115200n8" "console=tty0"];
   boot.blacklistedKernelModules = [
-    "nfc"
-    "pn533"
-    "pn533_usb"
+    "pn533_usb" "pn533" "nfc"
   ];
 
   users.extraUsers.root.initialPassword = "root";
