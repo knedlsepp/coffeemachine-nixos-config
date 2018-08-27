@@ -259,7 +259,7 @@
           type = "normal";
           pythonPackages = self: with self; [ coffeemachine ];
           socket = "${config.services.uwsgi.runDir}/coffeemachine.sock";
-          wsgi-file = "${pkgs.python3Packages.coffeemachine}/${pkgs.python.sitePackages}/coffeemachine/wsgi.py";
+          wsgi-file = "${pkgs.python3Packages.coffeemachine}/${pkgs.python3.sitePackages}/coffeemachine/wsgi.py";
         };
       };
     };
