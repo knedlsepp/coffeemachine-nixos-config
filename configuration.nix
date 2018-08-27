@@ -169,7 +169,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    (python.withPackages(ps: with ps; [ coffeemachine ]))
+    (python3.withPackages(ps: with ps; [ coffeemachine ]))
     vim
     gitMinimal
     htop
@@ -258,7 +258,7 @@
           type = "normal";
           pythonPackages = self: with self; [ coffeemachine ];
           socket = "${config.services.uwsgi.runDir}/coffeemachine.sock";
-          wsgi-file = "${pkgs.pythonPackages.coffeemachine}/${pkgs.python.sitePackages}/coffeemachine/wsgi.py";
+          wsgi-file = "${pkgs.python3Packages.coffeemachine}/${pkgs.python.sitePackages}/coffeemachine/wsgi.py";
         };
       };
     };
