@@ -258,12 +258,15 @@
     plugins = [ "python3" ];
   };
 
-  systemd.services.coffeemachine_nfc_reader= {
+  systemd.services.coffeemachine_nfc_reader = {
     description = "Coffeemachine NFC reader";
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = "${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/write_nfc_purchases_to_db.py";
       User = "root"; # There's a privilege issue otherwise: PermissionError: [Errno 13] Permission denied: '/dev/i2c-1'
+      Restart = "always";
+      RestartSec = "5s";
+
       #User = "nginx";
     };
     preStart = let baseDir = "/tmp/coffeemachine/"; in ''
