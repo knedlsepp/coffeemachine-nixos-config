@@ -266,6 +266,17 @@
       User = "root"; # There's a privilege issue otherwise: PermissionError: [Errno 13] Permission denied: '/dev/i2c-1'
       #User = "nginx";
     };
+    preStart = let baseDir = "/tmp/coffeemachine/"; in ''
+      mkdir -p ${baseDir}
+      #chown nginx.nginx ${baseDir}
+      chmod 0750 ${baseDir}
+      if ! [ -e ${baseDir}/.db-created ]; then
+        ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py migrate
+        ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py collectstatic --clear --no-input
+        echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@myproject.com', 'password')" | ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py shell
+        touch ${baseDir}/.db-created
+      fi
+    '';
   };
 
 
