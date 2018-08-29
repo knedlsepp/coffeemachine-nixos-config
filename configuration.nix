@@ -176,6 +176,7 @@
     plugins = with pkgs; [ acsccid ]; # ccid
   };
 
+  hardware.bluetooth.enable = false;
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = [
     (pkgs.stdenv.mkDerivation {
