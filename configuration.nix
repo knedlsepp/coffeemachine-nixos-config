@@ -238,6 +238,7 @@
       useDHCP = true;
     };
   };
+  networking.hostName = "coffeemachine";
   networking.hosts = {
     "127.0.0.1" = [ "coffeemachine.localnet" ];
     "10.0.0.1" = [ "coffeemachine.localnet" ];
