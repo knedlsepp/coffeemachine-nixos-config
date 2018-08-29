@@ -78,7 +78,7 @@
             version = "1.0.0";
             src = fetchGit {
               url = "https://github.com/knedlsepp/coffeemachine.git";
-              rev = "3a4c98ffe44225130f71b22db8f2dafbadf02f6a";
+              rev = "328d65f9582ccc22dba5b99e2afbe4b3018f9084";
             };
             propagatedBuildInputs = with python-self; [
               django
