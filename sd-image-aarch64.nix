@@ -30,6 +30,6 @@ in
     "pn533_usb" "pn533" "nfc"
   ];
 
-  users.extraUsers.root.initialPassword = "root";
+  users.extraUsers.root.initialPassword = "beans4life";
 
 }
