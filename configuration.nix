@@ -55,7 +55,7 @@
           };
           pyscard = python-super.pyscard.overrideAttrs(o: rec {
             preBuild = ''
-              substituteInPlace smartcard/CardMonitoring.py --replace "traceback.print_exc()" "print('Not bailing on you!'); continue"
+              substituteInPlace smartcard/CardMonitoring.py --replace "traceback.print_exc()" "traceback.print_exc(); print('Not bailing on you!'); continue"
             '';
           });
           coffeemachine = python-super.buildPythonPackage rec {
