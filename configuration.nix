@@ -311,7 +311,7 @@
       if ! [ -e ${baseDir}/.db-created ]; then
         ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py migrate
         ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py collectstatic --clear --no-input
-        echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@myproject.com', 'password')" | ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py shell
+        echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('root', 'root@localhost', 'beans4life')" | ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py shell
         chown -R tag-reader:coffeemachine-database ${baseDir}
         chmod -R 0770 ${baseDir}
         touch ${baseDir}/.db-created
