@@ -254,7 +254,7 @@
 
   services.nginx = {
     enable = true;
-    virtualHosts."www.coffeemachine.com" = {
+    virtualHosts."10.0.0.1" = {
       locations."/static/" = {
         extraConfig = ''
           alias             /tmp/coffeemachine/static/;
