@@ -297,25 +297,34 @@
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = "${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/write_nfc_purchases_to_db.py";
-      User = "root"; # There's a privilege issue otherwise: PermissionError: [Errno 13] Permission denied: '/dev/i2c-1'
+      User = "tag-reader";
+      Group = "coffeemachine-database";
       Restart = "always";
       RestartSec = "5s";
-
-      #User = "nginx";
+      PermissionsStartOnly = true; # preStart must chown the directories
     };
     preStart = let baseDir = "/tmp/coffeemachine/"; in ''
+      chgrp coffeemachine-database /dev/i2c-1
+      chmod g+rw /dev/i2c-1
+
       mkdir -p ${baseDir}
-      #chown nginx.nginx ${baseDir}
-      chmod 0750 ${baseDir}
       if ! [ -e ${baseDir}/.db-created ]; then
         ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py migrate
         ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py collectstatic --clear --no-input
         echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@myproject.com', 'password')" | ${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/manage.py shell
+        chown -R tag-reader:coffeemachine-database ${baseDir}
+        chmod -R 0770 ${baseDir}
         touch ${baseDir}/.db-created
       fi
     '';
   };
 
+  users.groups."coffeemachine-database".members = [ "nginx" "tag-reader" ];
+
+  users.users."tag-reader" = {
+    isSystemUser = true;
+    group = "coffeemachine-database";
+  };
 
   networking.firewall.enable = false;
   networking.firewall.allowedTCPPorts = [
