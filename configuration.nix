@@ -13,19 +13,22 @@
           sha256 = "1b8rbkdy7isqxyyfrpz0ngcx1shmmrrqjimwy76l4rh0rracfq4l";
         };
         postPatch = ''
+          substituteInPlace src/Makefile.am --replace '$(LEXLIB)' ""
           substituteInPlace src/Makefile.am --replace "/bin/echo" "echo"
           patchShebangs src/
         '';
         preConfigure = ''
           configureFlags="$configureFlags --enable-usbdropdir=$out/pcsc/drivers"
         '';
-        buildInputs = with pkgs; [
+        nativeBuildInputs = with pkgs; [
           autoreconfHook
-          pcsclite
-          libusb1
           flex
           perl
           pkgconfig
+        ];
+        buildInputs = with pkgs; [
+          pcsclite
+          libusb1
           libiconv
         ];
       };
