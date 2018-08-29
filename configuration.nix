@@ -230,7 +230,7 @@
   services.resolved.enable = false;
   services.dnsmasq = {
     enable = true;
-    alwaysKeepRunning = false;
+    alwaysKeepRunning = true;
     resolveLocalQueries = false; # Otherwise config messes with: dnsmasq-resolv.conf
     extraConfig = ''
         #### DHCP - config
