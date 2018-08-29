@@ -286,6 +286,11 @@
     plugins = [ "python3" ];
   };
 
+  systemd.services.pcscd.serviceConfig = {
+    RestartSec = "30s";
+    Restart = "always";
+  };
+
   systemd.services.coffeemachine_nfc_reader = {
     description = "Coffeemachine NFC reader";
     wantedBy = [ "multi-user.target" ];
