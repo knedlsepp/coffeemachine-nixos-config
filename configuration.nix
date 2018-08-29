@@ -17,7 +17,7 @@
           patchShebangs src/
         '';
         preConfigure = ''
-          configureFlags="$configureFlags --enable-usbdropdir=$out/var/lib/pcsc/drivers"
+          configureFlags="$configureFlags --enable-usbdropdir=$out/pcsc/drivers"
         '';
         buildInputs = with pkgs; [
           autoreconfHook
