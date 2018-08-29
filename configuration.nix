@@ -1,5 +1,20 @@
 { config, pkgs, lib, ... }:
 {
+  boot.loader.grub.enable = false;
+  boot.loader.generic-extlinux-compatible.enable = true;
+  boot.consoleLogLevel = lib.mkDefault 7;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # The serial ports listed here are:
+  # - ttyS0: for Tegra (Jetson TX1)
+  # - ttyAMA0: for QEMU's -machine virt
+  # Also increase the amount of CMA to ensure the virtual console on the RPi3 works.
+  boot.kernelParams = ["cma=32M" "console=ttyS0,115200n8" "console=ttyAMA0,115200n8" "console=tty0"];
+  boot.blacklistedKernelModules = [
+    "pn533_usb" "pn533" "nfc"
+  ];
+
+  users.extraUsers.root.initialPassword = "beans4life";
 
   nixpkgs.overlays = [
     (self: super: with self; {
@@ -177,6 +192,7 @@
   };
 
   hardware.bluetooth.enable = false;
+  nixpkgs.config.allowUnfree = true;
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = [
     (pkgs.stdenv.mkDerivation {
@@ -194,7 +210,6 @@
   ];
 
   imports = [
-    ./sd-image-aarch64.nix
     ./hardware-configuration.nix
   ];
 
