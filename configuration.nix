@@ -85,8 +85,8 @@
               # TODO: Yeah, yeah. Please don't lecture me. It's coffee accounting, not an atomic bomb.
               SECRET_KEY = 'pbm4ad1*2k^j69_b2ro-nhcm-uh^n8&take5bhbdm@)5+35v&e'
               DEBUG = True
-              ALLOWED_HOSTS = [ 'www.coffeemachine.com', '10.0.0.1' ]
               #############
+              ALLOWED_HOSTS = [ '*' ]
               INSTALLED_APPS = [
                   'coffeelist.apps.CoffeelistConfig',
                   'django.contrib.admin',
