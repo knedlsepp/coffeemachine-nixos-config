@@ -174,6 +174,8 @@
   security.polkit.enable = true;
   services.udisks2.enable = false;
 
+  time.timeZone = "Europe/Vienna";
+
   programs.command-not-found.enable = false;
 
   programs.vim.defaultEditor = true;
