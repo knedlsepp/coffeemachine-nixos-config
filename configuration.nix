@@ -3,7 +3,32 @@
 
   nixpkgs.overlays = [
     (self: super: with self; {
-
+      acsccid = pkgs.stdenv.mkDerivation rec {
+        name = "acsccid-${version}";
+        version = "1.1.5";
+        src = pkgs.fetchFromGitHub{
+          owner = "acshk";
+          repo = "acsccid";
+          rev = "v${version}";
+          sha256 = "1b8rbkdy7isqxyyfrpz0ngcx1shmmrrqjimwy76l4rh0rracfq4l";
+        };
+        postPatch = ''
+          substituteInPlace src/Makefile.am --replace "/bin/echo" "echo"
+          patchShebangs src/
+        '';
+        preConfigure = ''
+          configureFlags="$configureFlags --enable-usbdropdir=$out/var/lib/pcsc/drivers"
+        '';
+        buildInputs = with pkgs; [
+          autoreconfHook
+          pcsclite
+          libusb1
+          flex
+          perl
+          pkgconfig
+          libiconv
+        ];
+      };
       python27 = super.python27.override pythonOverrides;
       python27Packages = super.recurseIntoAttrs (python27.pkgs);
       python36 = super.python36.override pythonOverrides;
@@ -142,10 +167,7 @@
  
   services.pcscd = {
     enable = true;
-    plugins = with pkgs; [ ccid ]; # acsccid
-    readerConfig = ''
-      # Empty
-    '';
+    plugins = with pkgs; [ acsccid ]; # ccid
   };
 
   hardware.enableRedistributableFirmware = true;
