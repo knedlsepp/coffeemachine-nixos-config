@@ -293,6 +293,7 @@
 
   systemd.services.coffeemachine_nfc_reader = {
     description = "Coffeemachine NFC reader";
+    requires = [ "pcscd.service" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = "${pkgs.lib.getBin pkgs.python3Packages.coffeemachine}/bin/write_nfc_purchases_to_db.py";
