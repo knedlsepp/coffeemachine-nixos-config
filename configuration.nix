@@ -68,6 +68,18 @@
               sha256 = "0axzrb1b20vjsp02ppz0x28pwn8gvx3rzrsvkfbbww26wzzl7ndq";
             };
           };
+          django-tables2 = python-super.buildPythonPackage rec {
+            name = "django-tables2-${version}";
+            version = "1.21.2";
+            src = pkgs.fetchurl {
+              url = "mirror://pypi/d/django-tables2/${name}.tar.gz";
+              sha256 = "0ymzddkm3kkirdvabpjk40x9v00cir3wskbqya47wbvs3ch7kjf5";
+            };
+            propagatedBuildInputs = with python-super; [
+              django_2_0
+            ];
+            doCheck = false;
+          };
           pyscard = python-super.pyscard.overrideAttrs(o: rec {
             preBuild = ''
               substituteInPlace smartcard/CardMonitoring.py --replace "traceback.print_exc()" "traceback.print_exc(); print('Not bailing on you!'); continue"
@@ -78,10 +90,11 @@
             version = "1.0.0";
             src = fetchGit {
               url = "https://github.com/knedlsepp/coffeemachine.git";
-              rev = "b515f0100c59f77c375423f19bd422c3ed1fb184";
+              rev = "133f6acd57cb2fbd04feacfda3fe256ace2f4fa4";
             };
             propagatedBuildInputs = with python-self; [
               django_2_0
+              django-tables2
               pandas
               pyscard
               smbus2
@@ -103,6 +116,7 @@
               ALLOWED_HOSTS = [ '*' ]
               #############
               INSTALLED_APPS = [
+                  'django_tables2',
                   'coffeelist.apps.CoffeelistConfig',
                   'django.contrib.admin',
                   'django.contrib.auth',
@@ -125,7 +139,7 @@
               TEMPLATES = [
                   {
                       'BACKEND': 'django.template.backends.django.DjangoTemplates',
-                      'DIRS': [],
+                      'DIRS': [ './coffelist/templates/' ],
                       'APP_DIRS': True,
                       'OPTIONS': {
                           'context_processors': [
@@ -164,6 +178,10 @@
               USE_L10N = True
               USE_TZ = True
               STATIC_ROOT = '/tmp/coffeemachine/static/'
+              STATICFILES_DIRS = [
+                  os.path.join(BASE_DIR, "coffeelist", "templates", "coffeelist"),
+                  os.path.join(BASE_DIR, "coffeelist", "static"),
+              ]
               STATIC_URL = '/static/'
             '';
           };
