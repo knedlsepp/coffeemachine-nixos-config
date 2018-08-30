@@ -78,10 +78,10 @@
             version = "1.0.0";
             src = fetchGit {
               url = "https://github.com/knedlsepp/coffeemachine.git";
-              rev = "328d65f9582ccc22dba5b99e2afbe4b3018f9084";
+              rev = "b515f0100c59f77c375423f19bd422c3ed1fb184";
             };
             propagatedBuildInputs = with python-self; [
-              django
+              django_2_0
               pandas
               pyscard
               smbus2
